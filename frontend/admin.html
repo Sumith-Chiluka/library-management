@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Issued Books</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Admin Issued Books Dashboard</h1>
+
+    <table id="admin-issued-books">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>User</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Returned</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function fetchAllIssuedBooks() {
+            const token = "admin_jwt_token_here"; // Replace with actual admin token
+            const response = await fetch("http://localhost:5000/api/issue/all", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const books = await response.json();
+            const tableBody = document.querySelector("#admin-issued-books tbody");
+
+            books.forEach(book => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${book.user_name}</td>
+                    <td>${new Date(book.issue_date).toLocaleDateString()}</td>
+                    <td>${new Date(book.due_date).toLocaleDateString()}</td>
+                    <td>${book.returned ? "✅ Yes" : "❌ No"}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        fetchAllIssuedBooks();
+    </script>
+</body>
+</html>
