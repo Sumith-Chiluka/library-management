@@ -11,6 +11,10 @@ app.use('/api', bookRoutes); // Register book API routes
 const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
 
+const cors = require('cors');
+app.use(cors());
+
+
 console.log("📌 Issue Routes Loaded");
 const issueRoutes = require('./routes/issue');
 app.use('/api/issue', issueRoutes);
