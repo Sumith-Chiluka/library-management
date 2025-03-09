@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const API_BASE_URL = "https://your-backend-service.onrender.com"; // Set backend URL
     const tableBody = document.querySelector("#issued-books tbody");
     const filterDropdown = document.getElementById("filter");
     const searchInput = document.getElementById("search");
@@ -7,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function fetchIssuedBooks() {
         const token = "your_jwt_token_here"; // Replace with actual token
-        const response = await fetch("http://localhost:5000/api/issue/my", {
+        const response = await fetch(`${API_BASE_URL}/api/issue/my`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -18,25 +19,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function displayBooks() {
-        tableBody.innerHTML = "";
-        const searchText = searchInput.value.toLowerCase();
-
-        booksData.forEach(book => {
-            if (filterDropdown.value === "returned" && !book.returned) return;
-            if (filterDropdown.value === "pending" && book.returned) return;
-            if (!book.title.toLowerCase().includes(searchText)) return;
-
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${book.title}</td>
-                <td>${new Date(book.issue_date).toLocaleDateString()}</td>
-                <td>${new Date(book.due_date).toLocaleDateString()}</td>
-                <td>${book.returned ? "✅ Yes" : "❌ No"}</td>
-                <td>${book.return_date ? new Date(book.return_date).toLocaleDateString() : "-"}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-    }
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"></div></td></tr>`;
+    
+        setTimeout(() => {
+            tableBody.innerHTML = "";
+            const searchText = searchInput.value.toLowerCase();
+    
+            booksData.forEach(book => {
+                if (filterDropdown.value === "returned" && !book.returned) return;
+                if (filterDropdown.value === "pending" && book.returned) return;
+                if (!book.title.toLowerCase().includes(searchText)) return;
+    
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${new Date(book.issue_date).toLocaleDateString()}</td>
+                    <td>${new Date(book.due_date).toLocaleDateString()}</td>
+                    <td>${book.returned ? "✅ Yes" : "❌ No"}</td>
+                    <td>${book.return_date ? new Date(book.return_date).toLocaleDateString() : "-"}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }, 500);
+    }    
 
     function sortTable(columnIndex) {
         booksData.sort((a, b) => {
@@ -52,6 +57,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         displayBooks();
     }
+    function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "login.html";
+    }
+    
 
     filterDropdown.addEventListener("change", displayBooks);
     searchInput.addEventListener("input", displayBooks);
