@@ -12,8 +12,7 @@ const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
 
 const cors = require('cors');
-app.use(cors());
-
+app.use(cors({ origin: "https://sumith-chiluka.github.io" }));
 
 console.log("📌 Issue Routes Loaded");
 const issueRoutes = require('./routes/issue');
